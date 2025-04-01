@@ -97,9 +97,10 @@ function calculateWorkedTime(times, punchData) {
 
   hours = Math.floor(completedMinutes / 60);
   minutes = Math.floor(completedMinutes % 60);
+  seconds = Math.round((completedMinutes % 1) * 60);
 
   const timeObj = {
-    timeOver: to12HourFormat(hours + ":" + minutes),
+    timeOver: to12HourFormat(hours + ":" + minutes + ":" + seconds),
     currentTimeMinutes: getCurrentTimeInMinutes(),
     completedMinutes: completedMinutes,
     halDayObj: calculateHalfDay(times),
@@ -142,9 +143,10 @@ function calculateHalfDay(times) {
 
   hours = Math.floor(completedMinutes / 60);
   minutes = Math.floor(completedMinutes % 60);
+  seconds = Math.round((completedMinutes % 1) * 60);
 
   const timeObj = {
-    halfDayOver: to12HourFormat(hours + ":" + minutes),
+    halfDayOver: to12HourFormat(hours + ":" + minutes + ":" + seconds),
     halfDayCurrentTimeMinutes: getCurrentTimeInMinutes(),
     halfDayCompletedMinutes: completedMinutes,
   };
@@ -179,10 +181,12 @@ function to12HourFormat(time) {
   let [hours, minutes, seconds] = time.split(":").map(Number);
   let period = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12; // Convert 0 or 12 to 12, otherwise keep remainder
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0",
-  )} ${period}`;
+
+  // Ensure minutes and seconds are always two digits
+  minutes = String(minutes).padStart(2, "0");
+  seconds = seconds !== undefined ? String(seconds).padStart(2, "0") : "00";
+
+  return `${hours}:${minutes}:${seconds} ${period}`;
 }
 
 // Function to calculate the current time in minutes (including seconds)
@@ -266,7 +270,7 @@ function openModal(timeObj, punchData) {
 
                 <!-- Punch History Table -->
                 <h5 class="mt-4 text-dark fw-bold">Punch History</h5>
-                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
                     <table class="table table-bordered mt-2">
                         <thead class="table-secondary">
                             <tr>
