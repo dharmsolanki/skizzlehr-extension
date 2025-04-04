@@ -199,6 +199,34 @@ function getCurrentTimeInMinutes() {
   return totalMinutes;
 }
 
+function getAllEmpData() {
+  // let url = `https://api-skizzlehr.tech/organization/api/v1/employee-dropdown-list-all/?ordering=user__first_name&is_active=true&employment_status=[%22Confirmed%22,%22Probation%22,%22Resigned%22]`;
+  let url = `https://api-skizzlehr.tech/attendance/api/v1/profile-leave-type-employee-dropdown/?search=&id=157&year=2025`;
+
+  fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      authorization: `Bearer ${localStorage["access_token"]}`,
+      ["x-dts-schema"]: "https://drcsystems.skizzlehr.com",
+      ["content-type"]: "application/json",
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("Error Response:", text); // This will log any HTML error page
+        throw new Error("HTTP Error " + response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data)
+    })
+    .catch((error) => {
+      console.error("Fetch Error:", error);
+    });
+}
 
 function openModal(timeObj, punchData) {
   const modal = document.getElementById("timeOverModal");
@@ -308,5 +336,7 @@ function openModal(timeObj, punchData) {
   );
   myNewModal.show(); // Show modal
 }
+
+getAllEmpData();
 
 getData();
